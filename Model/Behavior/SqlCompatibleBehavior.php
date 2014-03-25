@@ -117,10 +117,10 @@ class SqlCompatibleBehavior extends ModelBehavior {
     		  
     		  $results [$key][$Model->$_model->alias] = isset( $_result [$Model->$_model->alias]) ? $_result [$Model->$_model->alias] : array();
     		}
+    		
+    		$results [$key][$Model->alias] = $this->stringId( $result [$Model->alias]);
 		  }
 		}
-		
-		
 		
 		return $results;
 	}
@@ -320,5 +320,23 @@ class SqlCompatibleBehavior extends ModelBehavior {
 			return $this->settings[$Model->alias]['operators'][$operator];
 		}
 		return '';
+	}
+	
+	public function stringId( $results)
+	{
+	  foreach( $results as $key => $result)
+	  {
+	    if( $result instanceof MongoId)
+	    {
+	      $results [$key] = $result->__toString();
+	    }
+	    
+	    if( is_array( $result))
+	    {
+	      $results [$key] = $this->stringId( $result);
+	    }
+	  }
+	  
+	  return $results;
 	}
 }
